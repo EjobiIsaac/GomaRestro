@@ -1,0 +1,39 @@
+name: Build GomaRestro EXE to Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build EXE
+        run: pyinstaller --onefile --windowed --name GomaRestro main.py
+
+      - name: Publish to Release (Permanent)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/GomaRestro.exe
+          body: |
+            🍽️ GomaRestro - Restaurant & Lounge System
+            ✅ Works on any Windows PC - No Python needed
+            ✅ Tables + Settings + Auto Backup + Activity Log
+            👨‍💼 For: Restaurants, Lounges, Bars in Uganda
+          draft: false
+          prerelease: false
